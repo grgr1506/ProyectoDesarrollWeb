@@ -1,0 +1,71 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h4 class="fw-bold mb-0" style="color:#1F4E79">
+      <i class="bi bi-speedometer2 me-2"></i>Dashboard
+    </h4>
+    <small class="text-muted">Bienvenido, {{ auth.getUser()?.nombre }}</small>
+  </div>
+  <a routerLink="/tickets/new" class="btn btn-primary">
+    <i class="bi bi-plus-circle me-2"></i>Nuevo Ticket
+  </a>
+</div>
+
+<div *ngIf="loading" class="text-center py-5">
+  <div class="spinner-border text-primary"></div>
+</div>
+
+<div *ngIf="!loading">
+  <!-- Métricas -->
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+      <div class="card p-3 text-center border-start border-primary border-4">
+        <div class="fs-1 fw-bold text-primary">{{ abiertos }}</div>
+        <div class="text-muted small"><i class="bi bi-inbox me-1"></i>Abiertos</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card p-3 text-center border-start border-warning border-4">
+        <div class="fs-1 fw-bold text-warning">{{ enProgreso }}</div>
+        <div class="text-muted small"><i class="bi bi-gear me-1"></i>En Progreso</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card p-3 text-center border-start border-success border-4">
+        <div class="fs-1 fw-bold text-success">{{ resueltos }}</div>
+        <div class="text-muted small"><i class="bi bi-check2-circle me-1"></i>Resueltos</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card p-3 text-center border-start border-danger border-4">
+        <div class="fs-1 fw-bold text-danger">{{ alta }}</div>
+        <div class="text-muted small"><i class="bi bi-exclamation-triangle me-1"></i>Alta Prioridad</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tickets recientes -->
+  <div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center" style="background:#f8f9fa">
+      <span class="fw-semibold"><i class="bi bi-clock-history me-2"></i>Tickets Recientes</span>
+      <a routerLink="/tickets" class="btn btn-sm btn-outline-primary">Ver todos</a>
+    </div>
+    <div class="card-body p-0">
+      <div *ngIf="recientes.length === 0" class="text-center text-muted py-4">
+        <i class="bi bi-inbox fs-1 d-block mb-2"></i>No hay tickets aún
+      </div>
+      <div class="list-group list-group-flush">
+        <a *ngFor="let t of recientes" [routerLink]="['/tickets', t.id]"
+           class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3">
+          <div>
+            <span class="fw-semibold">#{{ t.id }} {{ t.titulo }}</span>
+            <div class="text-muted small">{{ t.categoria }} · {{ t.usuarioCreador }}</div>
+          </div>
+          <div class="d-flex gap-2 align-items-center">
+            <span class="badge" [ngClass]="'badge-' + t.prioridad">{{ t.prioridad }}</span>
+            <span class="badge" [ngClass]="'badge-' + t.estado">{{ t.estado }}</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

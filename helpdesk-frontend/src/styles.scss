@@ -1,0 +1,26 @@
+:root {
+  --primary: #1F4E79;
+  --primary-light: #2E75B6;
+  --accent: #BDD7EE;
+}
+
+body { background-color: #f0f4f8; font-family: 'Segoe UI', sans-serif; }
+
+.navbar-helpdesk { background-color: var(--primary) !important; }
+
+.card { border: none; box-shadow: 0 2px 8px rgba(0,0,0,.08); }
+
+.badge-ALTA       { background-color: #dc3545; }
+.badge-MEDIA      { background-color: #ffc107; color: #000; }
+.badge-BAJA       { background-color: #0dcaf0; color: #000; }
+.badge-ABIERTO    { background-color: #0d6efd; }
+.badge-EN_PROGRESO{ background-color: #ffc107; color: #000; }
+.badge-RESUELTO   { background-color: #198754; }
+.badge-CANCELADO  { background-color: #6c757d; }
+
+.table thead th { background-color: var(--primary); color: #fff; }
+
+.btn-primary { background-color: var(--primary-light); border-color: var(--primary-light); }
+.btn-primary:hover { background-color: var(--primary); border-color: var(--primary); }
+
+.login-card { max-width: 420px; margin: 80px auto; }

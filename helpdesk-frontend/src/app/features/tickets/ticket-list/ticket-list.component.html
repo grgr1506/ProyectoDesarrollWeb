@@ -1,0 +1,90 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h4 class="fw-bold mb-0" style="color:#1F4E79">
+    <i class="bi bi-ticket-detailed me-2"></i>
+    {{ auth.isTecnico() ? 'Todos los Tickets' : 'Mis Tickets' }}
+  </h4>
+  <a routerLink="/tickets/new" class="btn btn-primary">
+    <i class="bi bi-plus-circle me-2"></i>Nuevo Ticket
+  </a>
+</div>
+
+<!-- Filtros -->
+<div class="card mb-3 p-3">
+  <div class="row g-2 align-items-end">
+    <div class="col-md-4">
+      <input type="text" class="form-control form-control-sm" placeholder="Buscar por título o categoría..."
+             [(ngModel)]="busqueda" (ngModelChange)="applyFilter()">
+    </div>
+    <div class="col-md-3">
+      <select class="form-select form-select-sm" [(ngModel)]="filtroEstado" (ngModelChange)="applyFilter()">
+        <option value="">Todos los estados</option>
+        <option value="ABIERTO">Abierto</option>
+        <option value="EN_PROGRESO">En Progreso</option>
+        <option value="RESUELTO">Resuelto</option>
+        <option value="CANCELADO">Cancelado</option>
+      </select>
+    </div>
+    <div class="col-md-3">
+      <select class="form-select form-select-sm" [(ngModel)]="filtroPrioridad" (ngModelChange)="applyFilter()">
+        <option value="">Todas las prioridades</option>
+        <option value="ALTA">Alta</option>
+        <option value="MEDIA">Media</option>
+        <option value="BAJA">Baja</option>
+      </select>
+    </div>
+    <div class="col-md-2">
+      <button class="btn btn-outline-secondary btn-sm w-100" (click)="clearFilters()">
+        <i class="bi bi-x-circle me-1"></i>Limpiar
+      </button>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="loading" class="text-center py-5">
+  <div class="spinner-border text-primary"></div>
+</div>
+
+<div *ngIf="!loading" class="card">
+  <div class="card-body p-0">
+    <div *ngIf="filtered.length === 0" class="text-center text-muted py-5">
+      <i class="bi bi-search fs-1 d-block mb-2"></i>No se encontraron tickets
+    </div>
+    <div class="table-responsive" *ngIf="filtered.length > 0">
+      <table class="table table-hover mb-0">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Título</th>
+            <th>Categoría</th>
+            <th>Prioridad</th>
+            <th>Estado</th>
+            <th *ngIf="auth.isTecnico()">Creado por</th>
+            <th>Técnico</th>
+            <th>Fecha</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let t of filtered">
+            <td class="text-muted small">{{ t.id }}</td>
+            <td class="fw-semibold">{{ t.titulo }}</td>
+            <td><span class="badge bg-light text-dark border">{{ t.categoria }}</span></td>
+            <td><span class="badge" [ngClass]="'badge-' + t.prioridad">{{ t.prioridad }}</span></td>
+            <td><span class="badge" [ngClass]="'badge-' + t.estado">{{ t.estado | titlecase }}</span></td>
+            <td *ngIf="auth.isTecnico()" class="text-muted small">{{ t.usuarioCreador }}</td>
+            <td class="text-muted small">{{ t.tecnicoAsignado || '—' }}</td>
+            <td class="text-muted small">{{ t.fechaCreacion | date:'dd/MM/yy HH:mm' }}</td>
+            <td>
+              <a [routerLink]="['/tickets', t.id]" class="btn btn-sm btn-outline-primary">
+                <i class="bi bi-eye"></i>
+              </a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card-footer text-muted small" *ngIf="filtered.length > 0">
+    Mostrando {{ filtered.length }} de {{ tickets.length }} tickets
+  </div>
+</div>

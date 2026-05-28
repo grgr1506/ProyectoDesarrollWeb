@@ -1,0 +1,113 @@
+<div class="d-flex align-items-center mb-4 gap-3">
+  <a routerLink="/tickets" class="btn btn-outline-secondary btn-sm">
+    <i class="bi bi-arrow-left"></i>
+  </a>
+  <h4 class="fw-bold mb-0" style="color:#1F4E79">
+    <i class="bi bi-ticket-detailed me-2"></i>Detalle del Ticket
+  </h4>
+</div>
+
+<div *ngIf="loading" class="text-center py-5"><div class="spinner-border text-primary"></div></div>
+<div *ngIf="error && !ticket" class="alert alert-danger"><i class="bi bi-exclamation-triangle me-2"></i>{{ error }}</div>
+
+<div *ngIf="ticket" class="row g-4">
+  <!-- Panel principal -->
+  <div class="col-lg-8">
+    <div class="card p-4 mb-3">
+      <div class="d-flex justify-content-between align-items-start mb-3">
+        <div>
+          <span class="text-muted small">#{{ ticket.id }}</span>
+          <h5 class="fw-bold mb-1">{{ ticket.titulo }}</h5>
+          <span class="badge bg-light text-dark border me-2">{{ ticket.categoria }}</span>
+          <span class="badge" [ngClass]="'badge-' + ticket.prioridad">{{ ticket.prioridad }}</span>
+          <span class="badge ms-2" [ngClass]="'badge-' + ticket.estado">{{ ticket.estado }}</span>
+        </div>
+      </div>
+      <hr>
+      <h6 class="fw-semibold text-muted">DESCRIPCIÓN</h6>
+      <p class="mb-0" style="white-space:pre-wrap">{{ ticket.descripcion }}</p>
+    </div>
+
+    <!-- Solución aplicada -->
+    <div *ngIf="ticket.solucionAplicada" class="card p-4 border-success border-start border-4">
+      <h6 class="fw-semibold text-success"><i class="bi bi-check-circle me-2"></i>Solución Aplicada</h6>
+      <p class="mb-0" style="white-space:pre-wrap">{{ ticket.solucionAplicada }}</p>
+    </div>
+
+    <!-- Formulario resolver -->
+    <div *ngIf="showResolverForm" class="card p-4 border-primary border-start border-4 mt-3">
+      <h6 class="fw-semibold"><i class="bi bi-tools me-2"></i>Documentar Solución</h6>
+      <div *ngIf="error" class="alert alert-danger py-2 small">{{ error }}</div>
+      <textarea class="form-control mb-3" [(ngModel)]="solucion" rows="4"
+                placeholder="Describe la solución aplicada al problema..."></textarea>
+      <div class="d-flex gap-2">
+        <button class="btn btn-success" (click)="resolver()">
+          <i class="bi bi-check2-circle me-2"></i>Marcar como Resuelto
+        </button>
+        <button class="btn btn-outline-secondary" (click)="showResolverForm = false">Cancelar</button>
+      </div>
+    </div>
+
+    <!-- Alertas -->
+    <div *ngIf="successMsg" class="alert alert-success mt-3 py-2">
+      <i class="bi bi-check-circle me-2"></i>{{ successMsg }}
+    </div>
+    <div *ngIf="error && ticket" class="alert alert-danger mt-3 py-2">
+      <i class="bi bi-exclamation-triangle me-2"></i>{{ error }}
+    </div>
+  </div>
+
+  <!-- Panel lateral -->
+  <div class="col-lg-4">
+    <!-- Info -->
+    <div class="card p-3 mb-3">
+      <h6 class="fw-semibold mb-3 text-muted">INFORMACIÓN</h6>
+      <dl class="row mb-0 small">
+        <dt class="col-5">Creado por</dt>
+        <dd class="col-7">{{ ticket.usuarioCreador }}</dd>
+        <dt class="col-5">Técnico</dt>
+        <dd class="col-7">{{ ticket.tecnicoAsignado || '—' }}</dd>
+        <dt class="col-5">Creación</dt>
+        <dd class="col-7">{{ ticket.fechaCreacion | date:'dd/MM/yyyy HH:mm' }}</dd>
+        <dt class="col-5">Resolución</dt>
+        <dd class="col-7">{{ ticket.fechaResolucion ? (ticket.fechaResolucion | date:'dd/MM/yyyy HH:mm') : '—' }}</dd>
+      </dl>
+    </div>
+
+    <!-- Acciones -->
+    <div class="card p-3">
+      <h6 class="fw-semibold mb-3 text-muted">ACCIONES</h6>
+      <div class="d-grid gap-2">
+
+        <!-- SOPORTE_TI: asumir -->
+        <button *ngIf="auth.isSoporte() && ticket.estado === 'ABIERTO'"
+                class="btn btn-outline-primary" (click)="asumir()">
+          <i class="bi bi-person-check me-2"></i>Asumir Ticket
+        </button>
+
+        <!-- SOPORTE_TI / SUPERVISOR: resolver -->
+        <button *ngIf="auth.isTecnico() && (ticket.estado === 'ABIERTO' || ticket.estado === 'EN_PROGRESO') && !showResolverForm"
+                class="btn btn-success" (click)="showResolverForm = true">
+          <i class="bi bi-check2-circle me-2"></i>Resolver Ticket
+        </button>
+
+        <!-- USUARIO_FINAL: cancelar -->
+        <button *ngIf="auth.isUsuarioFinal() && (ticket.estado === 'ABIERTO' || ticket.estado === 'EN_PROGRESO')"
+                class="btn btn-outline-warning" (click)="cancelar()">
+          <i class="bi bi-x-circle me-2"></i>Cancelar Ticket
+        </button>
+
+        <!-- SUPERVISOR: eliminar -->
+        <button *ngIf="auth.isSupervisor()"
+                class="btn btn-outline-danger" (click)="eliminar()">
+          <i class="bi bi-trash me-2"></i>Eliminar Ticket
+        </button>
+
+        <span *ngIf="ticket.estado === 'RESUELTO' || ticket.estado === 'CANCELADO'"
+              class="text-muted small text-center">
+          <i class="bi bi-lock me-1"></i>Ticket cerrado
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
