@@ -11,33 +11,55 @@
     <div *ngIf="error"   class="alert alert-danger  py-2"><i class="bi bi-exclamation-triangle me-2"></i>{{ error }}</div>
     <div *ngIf="success" class="alert alert-success py-2"><i class="bi bi-check-circle me-2"></i>{{ success }}</div>
 
-    <form (ngSubmit)="submit()">
+    <form [formGroup]="form" (ngSubmit)="submit()">
       <div class="mb-3">
         <label class="form-label fw-semibold">Nombre completo</label>
-        <input type="text" class="form-control" [(ngModel)]="nombre" name="nombre" placeholder="Juan Pérez" required>
+        <input type="text" class="form-control" formControlName="nombre"
+               [ngClass]="{'is-invalid': nombre.invalid && nombre.touched}"
+               placeholder="Juan Pérez">
+        <div *ngIf="nombre.invalid && nombre.touched" class="text-danger small mt-1">
+          <span *ngIf="nombre.errors?.['required']">El nombre es obligatorio.</span>
+          <span *ngIf="nombre.errors?.['minlength']">Mínimo 3 caracteres.</span>
+        </div>
       </div>
+
       <div class="mb-3">
         <label class="form-label fw-semibold">Correo electrónico</label>
-        <input type="email" class="form-control" [(ngModel)]="correo" name="correo" placeholder="juan@empresa.com" required>
+        <input type="email" class="form-control" formControlName="correo"
+               [ngClass]="{'is-invalid': correo.invalid && correo.touched}"
+               placeholder="juan@empresa.com">
+        <div *ngIf="correo.invalid && correo.touched" class="text-danger small mt-1">
+          <span *ngIf="correo.errors?.['required']">El correo es obligatorio.</span>
+          <span *ngIf="correo.errors?.['email']">Ingresa un correo válido.</span>
+        </div>
       </div>
+
       <div class="mb-3">
         <label class="form-label fw-semibold">Contraseña</label>
-        <input type="password" class="form-control" [(ngModel)]="password" name="password"
-               placeholder="Mínimo 6 caracteres" required minlength="6">
+        <input type="password" class="form-control" formControlName="password"
+               [ngClass]="{'is-invalid': password.invalid && password.touched}"
+               placeholder="Mínimo 6 caracteres">
+        <div *ngIf="password.invalid && password.touched" class="text-danger small mt-1">
+          <span *ngIf="password.errors?.['required']">La contraseña es obligatoria.</span>
+          <span *ngIf="password.errors?.['minlength']">Mínimo 6 caracteres.</span>
+        </div>
       </div>
+
       <div class="mb-4">
         <label class="form-label fw-semibold">Rol</label>
-        <select class="form-select" [(ngModel)]="rol" name="rol">
+        <select class="form-select" formControlName="rol">
           <option value="USUARIO_FINAL">Usuario Final</option>
           <option value="SOPORTE_TI">Soporte TI</option>
           <option value="SUPERVISOR_TI">Supervisor TI</option>
         </select>
       </div>
+
       <button type="submit" class="btn btn-primary w-100" [disabled]="loading">
         <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
         Registrarme
       </button>
     </form>
+
     <hr>
     <p class="text-center text-muted small mb-0">
       ¿Ya tienes cuenta? <a routerLink="/login">Iniciar sesión</a>

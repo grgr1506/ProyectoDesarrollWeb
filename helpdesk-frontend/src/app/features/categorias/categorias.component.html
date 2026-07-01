@@ -14,23 +14,26 @@
   <button type="button" class="btn-close" (click)="error=''"></button>
 </div>
 
-<!-- Formulario modal-like -->
 <div *ngIf="showForm" class="card p-4 mb-4 border-primary border-start border-4">
   <h6 class="fw-semibold mb-3">{{ editando ? 'Editar Categoría' : 'Nueva Categoría' }}</h6>
-  <form (ngSubmit)="save()">
+  <form [formGroup]="form" (ngSubmit)="save()">
     <div class="row g-3">
       <div class="col-md-6">
         <label class="form-label fw-semibold">Nombre <span class="text-danger">*</span></label>
-        <input type="text" class="form-control" [(ngModel)]="form.nombre" name="nombre" required>
+        <input type="text" class="form-control" formControlName="nombre"
+               [ngClass]="{'is-invalid': nombre.invalid && nombre.touched}">
+        <div *ngIf="nombre.invalid && nombre.touched" class="text-danger small mt-1">
+          <span *ngIf="nombre.errors?.['required']">El nombre es obligatorio.</span>
+          <span *ngIf="nombre.errors?.['minlength']">Mínimo 3 caracteres.</span>
+        </div>
       </div>
       <div class="col-md-6">
         <label class="form-label fw-semibold">Descripción</label>
-        <input type="text" class="form-control" [(ngModel)]="form.descripcion" name="descripcion">
+        <input type="text" class="form-control" formControlName="descripcion">
       </div>
       <div class="col-12">
         <div class="form-check">
-          <input type="checkbox" class="form-check-input" [(ngModel)]="form.requiereValidacionProveedor"
-                 name="req" id="req">
+          <input type="checkbox" class="form-check-input" formControlName="requiereValidacionProveedor" id="req">
           <label class="form-check-label" for="req">
             Requiere documentar solución al cerrar (RN02)
           </label>

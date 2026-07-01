@@ -20,28 +20,43 @@
         recibirán prioridad <strong>ALTA</strong> automáticamente.
       </div>
 
-      <form (ngSubmit)="submit()">
+      <form [formGroup]="form" (ngSubmit)="submit()">
         <div class="mb-3">
           <label class="form-label fw-semibold">Título <span class="text-danger">*</span></label>
-          <input type="text" class="form-control" [(ngModel)]="titulo" name="titulo"
-                 placeholder="Describe brevemente el problema" required>
+          <input type="text" class="form-control" formControlName="titulo"
+                 [ngClass]="{'is-invalid': titulo.invalid && titulo.touched}"
+                 placeholder="Describe brevemente el problema">
+          <div *ngIf="titulo.invalid && titulo.touched" class="text-danger small mt-1">
+            <span *ngIf="titulo.errors?.['required']">El título es obligatorio.</span>
+            <span *ngIf="titulo.errors?.['minlength']">Mínimo 5 caracteres.</span>
+            <span *ngIf="titulo.errors?.['maxlength']">Máximo 100 caracteres.</span>
+          </div>
         </div>
 
         <div class="mb-3">
           <label class="form-label fw-semibold">Categoría <span class="text-danger">*</span></label>
-          <select class="form-select" [(ngModel)]="categoriaId" name="categoriaId" required>
+          <select class="form-select" formControlName="categoriaId"
+                  [ngClass]="{'is-invalid': categoriaId.invalid && categoriaId.touched}">
             <option [ngValue]="null" disabled>Selecciona una categoría...</option>
             <option *ngFor="let c of categorias" [ngValue]="c.id">
               {{ c.nombre }} <span *ngIf="c.requiereValidacionProveedor">⚠️</span>
             </option>
           </select>
+          <div *ngIf="categoriaId.invalid && categoriaId.touched" class="text-danger small mt-1">
+            Debes seleccionar una categoría.
+          </div>
           <div class="form-text">⚠️ = Requiere documentar solución al cerrar</div>
         </div>
 
         <div class="mb-4">
           <label class="form-label fw-semibold">Descripción detallada <span class="text-danger">*</span></label>
-          <textarea class="form-control" [(ngModel)]="descripcion" name="descripcion" rows="5"
-                    placeholder="Describe el problema con detalle: cuándo ocurrió, equipos afectados, mensajes de error..." required></textarea>
+          <textarea class="form-control" formControlName="descripcion" rows="5"
+                    [ngClass]="{'is-invalid': descripcion.invalid && descripcion.touched}"
+                    placeholder="Describe el problema con detalle: cuándo ocurrió, equipos afectados, mensajes de error..."></textarea>
+          <div *ngIf="descripcion.invalid && descripcion.touched" class="text-danger small mt-1">
+            <span *ngIf="descripcion.errors?.['required']">La descripción es obligatoria.</span>
+            <span *ngIf="descripcion.errors?.['minlength']">Mínimo 10 caracteres.</span>
+          </div>
         </div>
 
         <div class="d-flex gap-2">
